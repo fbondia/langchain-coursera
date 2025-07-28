@@ -212,3 +212,79 @@ Essa estratégia é útil para:
 - **Aumentar a densidade de informação por token**
 
 > ⚠️ Naturalmente, há um **trade-off**: você pode ganhar espaço e velocidade, mas corre o risco de perder nuances importantes se a compressão for excessiva ou mal conduzida.
+
+## 5 - QUESTION - ANSWER
+
+O fluxo básico é:
+
+1 - questão é submetida para o vector store
+2 - vector store provê n documentos relevantes
+3 - questão original e chunks são enviados para LLM
+
+### 🧠 Modos de resposta no LangChain: `stuff`, `map_reduce`, `refine` e `map_rerank`
+
+Ao usar LangChain com múltiplos documentos (ou chunks), podemos escolher diferentes estratégias para combinar as informações e gerar uma resposta final com o LLM.
+
+---
+
+#### 1. `stuff` — Tudo de uma vez
+
+> Envia todos os documentos concatenados diretamente no prompt do modelo.
+
+- ✅ Simples e rápido
+- ❌ Limitado pelo tamanho máximo de tokens do modelo
+- Ideal para poucos documentos pequenos
+
+```text
+[documento1] + [documento2] + ... → LLM responde com base em todos
+```
+
+#### 2. map_reduce — Processamento paralelo + resumo
+
+> O modelo processa cada chunk individualmente (map) e depois resume todas as respostas (reduce).
+
+- 🗺 Map: o LLM responde cada documento separadamente
+- 🧾 Reduce: combina as respostas em um único resumo final
+- ✅ Escalável para muitos documentos
+- ❌ Pode perder o contexto global
+
+```
+[doc1 → resp1], [doc2 → resp2], ... → resumo final das respostas
+```
+
+#### 3. refine — Construção progressiva
+
+> Cria uma resposta inicial com o primeiro chunk e refina iterativamente com os demais.
+
+- Cada nova iteração melhora ou expande a resposta anterior
+- ✅ Mantém coerência entre passos
+- ❌ Pode propagar erros do início se a resposta inicial for fraca
+
+```
+resp1 = resposta(doc1)  
+resp2 = refinar(resp1 + doc2)  
+resp3 = refinar(resp2 + doc3)  
+... → resposta final
+```
+
+#### 4. map_rerank — Seleção da melhor resposta
+
+> O modelo avalia cada chunk individualmente e atribui uma pontuação de relevância a cada resposta.
+
+- ✅ Retorna a melhor resposta individual
+- ❌ Pode ignorar outras informações relevantes
+
+```
+[doc1 → (resposta1, score1)], [doc2 → (resposta2, score2)], ...  
+→ retorna a resposta com maior score
+```
+
+#### 🧭 Qual usar?
+
+| Modo           | Quando usar                                          |
+-----------------|------------------------------------------------------|
+| stuff          | Poucos documentos curtos                             |
+| map_reduce     | Muitos documentos, resposta resumida                 |
+| refine         | Deseja construir a resposta progressivamente         |
+| map_rerank     | Quer selecionar a melhor resposta entre as possíveis |
+
