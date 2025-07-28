@@ -28,7 +28,7 @@ source env/bin/activate
 ## Dependências
 
 ```
-pip install langchain pypdf yt_dlp pydub dotenv openai langchain-community beautifulsoup4 tiktoken
+pip install langchain pypdf yt_dlp pydub dotenv openai langchain-community beautifulsoup4 tiktoken langchain-openai chromadb
 ```
 
 ## O processo com o LangChain ocorre nas etapas LOAD, SPLIT, EMBED, RETRIEVE
@@ -127,3 +127,42 @@ from langchain.text_splitter import Language
 
 
 ### 3 - EMBED
+
+Após carregar o documento e dividi-lo em pedaços menores (chunks), é necessário transformar cada chunk em um vetor numérico que represente seu conteúdo de forma semântica. Esse processo é chamado de embedding, e o vetor resultante é conhecido como um embedding vector (ou simplesmente embedding).
+
+Esses vetores geralmente são armazenados em uma base vetorial (vector store), permitindo buscas por similaridade com base no conteúdo, em vez de apenas palavras-chave.
+
+Neste exemplo usamos o base vetorial Chroma, mas poderia ser o FAISS, Weaviate etc.
+
+Importante notar que neste caso estamos usando o OpenAIEmbeddings, consumindo a API da OpenAI. A vetorização dos chunks **gera custo financeiro**. Em relação a isso, algumas dicas:
+
+### 📊 Preços (julho/2025)
+
+- `text-embedding-3-small`: **0.02 USD por 1 milhão de tokens**
+- `text-embedding-3-large`: **0.13 USD por 1 milhão de tokens**
+
+Fonte oficial: [https://openai.com/pricing](https://openai.com/pricing)
+
+### 🔢 Exemplo prático
+
+Se você tiver 100 documentos com 500 tokens cada:
+
+- Total de tokens: 100 × 500 = **50.000 tokens**
+- Custo estimado com `text-embedding-3-small`:  
+  → 50.000 × 0.00002 USD = **0.01 USD**
+
+### 💡 Dicas para economizar
+
+- Prefira o modelo `text-embedding-3-small`, que é mais barato e eficiente.
+- Ajuste o tamanho dos chunks para otimizar o número de tokens por embedding.
+- Use modelos **locais e gratuitos** caso a máxima precisão da OpenAI não seja necessária.
+
+### 🆓 Alternativas gratuitas (locais)
+
+Você pode usar modelos open-source com `HuggingFaceEmbeddings` ou `LangChain`:
+
+- `all-MiniLM-L6-v2`
+- `intfloat/e5-small-v2`
+- `thenlper/gte-small`
+
+Esses modelos funcionam bem em pipelines RAG, sem custo por token.
