@@ -28,7 +28,7 @@ source env/bin/activate
 ## Dependências
 
 ```
-pip install langchain pypdf yt_dlp pydub dotenv openai langchain-community beautifulsoup4 tiktoken langchain-openai chromadb
+pip install langchain pypdf yt_dlp pydub dotenv openai langchain-community beautifulsoup4 tiktoken langchain-openai langchain_chroma chromadb lark scikit-learn
 ```
 
 ## O processo com o LangChain ocorre nas etapas LOAD, SPLIT, EMBED, RETRIEVE
@@ -166,3 +166,49 @@ Você pode usar modelos open-source com `HuggingFaceEmbeddings` ou `LangChain`:
 - `thenlper/gte-small`
 
 Esses modelos funcionam bem em pipelines RAG, sem custo por token.
+
+
+### 4 - RETRIEVAL
+
+Nesta etapa, consultamos de fato a base semântica (vector store). A busca retorna, por padrão, os **chunks mais similares** à consulta — ou seja, aqueles cujo *embedding* tem menor distância vetorial em relação ao *embedding* da pergunta.
+
+No entanto, **os resultados mais similares nem sempre são os mais úteis**. Em muitos casos, pode ser mais interessante obter respostas que tragam **diversidade informativa**, e não apenas repetições do mesmo contexto. É aqui que entra o algoritmo **MMR (Maximal Marginal Relevance)**.
+
+O MMR busca um **equilíbrio entre relevância e novidade**: resultados que sejam suficientemente **relacionados à consulta**, mas ao mesmo tempo **diferentes entre si**, evitando redundância.
+
+#### 📌 Exemplo ilustrativo
+
+Imagine que um cozinheiro faz a pergunta:  
+**"Quais cogumelos são totalmente brancos?"**
+
+- Os resultados mais similares podem descrever **uma única espécie em detalhes** (como o champignon).
+- Porém, um trecho que mencione que **"uma espécie branca é venenosa"**, mesmo sendo menos similar, pode ser **crucial** — e o MMR ajuda a trazê-lo para os resultados.
+
+➡️ Em resumo: **MMR busca relevância com a consulta, mas diversidade em relação aos demais resultados**.
+
+---
+
+### 🔎 Estratégias adicionais de recuperação
+
+Além da busca por similaridade ou MMR, existem outras estratégias que podem ser aplicadas em sistemas baseados em embeddings:
+
+#### 📘 LLM-Aided Retrieval
+
+Algumas consultas possuem tanto um **elemento semântico** quanto um **filtro explícito**.  
+Exemplo:  
+**"Quais filmes de terror foram lançados em 1980?"**
+
+- Parte semântica: *filmes de terror*  
+- Parte estrutural: *ano de lançamento = 1980*
+
+Esse tipo de consulta pode ser tratado com uma estratégia chamada **LLM-Aided Retrieval**, onde o LLM ajuda a **entender, expandir ou reformular a consulta**, e a engine de busca aplica filtros estruturados.
+
+#### 🧠 Compressão com LLM
+
+Após recuperar diversos chunks, é possível usar um LLM para **resumir, combinar ou comprimir** os resultados antes de adicioná-los ao prompt final.
+
+Essa estratégia é útil para:
+- **Reduzir o custo e o tamanho do prompt**
+- **Aumentar a densidade de informação por token**
+
+> ⚠️ Naturalmente, há um **trade-off**: você pode ganhar espaço e velocidade, mas corre o risco de perder nuances importantes se a compressão for excessiva ou mal conduzida.
