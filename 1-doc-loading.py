@@ -4,26 +4,12 @@ import sys
 
 from dotenv import load_dotenv, find_dotenv
 
-#from langchain.document_loaders import PyPDFLoader
 from langchain_community.document_loaders import PyPDFLoader
-
-#from langchain.document_loaders.generic import GenericLoader,  FileSystemBlobLoader
 from langchain_community.document_loaders.generic import GenericLoader,  FileSystemBlobLoader
-
-#from langchain.document_loaders.parsers import OpenAIWhisperParser
 from langchain_community.document_loaders.parsers import OpenAIWhisperParser
-
-#from langchain.document_loaders.blob_loaders.youtube_audio import YoutubeAudioLoader
 from langchain_community.document_loaders.blob_loaders.youtube_audio import YoutubeAudioLoader
-
-#from langchain.document_loaders import WebBaseLoader
 from langchain_community.document_loaders import WebBaseLoader
-
-#from langchain.document_loaders import NotionDirectoryLoader
 from langchain_community.document_loaders import NotionDirectoryLoader
-
-
-#sys.path.append('../..')
 
 _ = load_dotenv(find_dotenv()) # read local .env file
 openai.api_key  = os.environ['OPENAI_API_KEY']
