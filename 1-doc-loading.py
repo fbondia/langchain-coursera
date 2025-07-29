@@ -11,7 +11,7 @@ from langchain_community.document_loaders.blob_loaders.youtube_audio import Yout
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_community.document_loaders import NotionDirectoryLoader
 
-_ = load_dotenv(find_dotenv()) # read local .env file
+_ = load_dotenv(find_dotenv())
 openai.api_key  = os.environ['OPENAI_API_KEY']
 
 def load_pdf():

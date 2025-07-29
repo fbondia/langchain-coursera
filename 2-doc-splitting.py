@@ -9,7 +9,6 @@ from langchain.text_splitter import MarkdownHeaderTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.document_loaders import NotionDirectoryLoader
 
-# 🔐 Carrega chave da OpenAI do .env
 _ = load_dotenv(find_dotenv()) 
 openai.api_key  = os.environ['OPENAI_API_KEY']
 

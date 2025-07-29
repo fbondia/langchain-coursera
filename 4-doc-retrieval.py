@@ -108,8 +108,6 @@ def filter_search():
     for d in docs:
         print(d.metadata)
 
-
-
 def compression_search():
 
     llm = OpenAI(temperature=0, model="gpt-3.5-turbo-instruct")
