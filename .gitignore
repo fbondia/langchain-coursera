@@ -3,3 +3,5 @@ docs/cs229_lectures
 docs/Notion_DB
 docs/youtube
 .env
+docs/json
+vectordb

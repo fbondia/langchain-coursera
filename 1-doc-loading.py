@@ -1,6 +1,7 @@
 import os
 import openai
 import sys
+import json
 
 from dotenv import load_dotenv, find_dotenv
 
@@ -10,6 +11,7 @@ from langchain_community.document_loaders.parsers import OpenAIWhisperParser
 from langchain_community.document_loaders.blob_loaders.youtube_audio import YoutubeAudioLoader
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_community.document_loaders import NotionDirectoryLoader
+from langchain_community.document_loaders import JSONLoader
 
 _ = load_dotenv(find_dotenv())
 openai.api_key  = os.environ['OPENAI_API_KEY']
@@ -36,7 +38,6 @@ def load_pdf():
     print("First page metadata:")
     print(page.metadata)
 
-
 def load_youtube():
 
     print("===== YOUTUBE ======")
@@ -60,9 +61,6 @@ def load_youtube():
 
     print(docs[0].page_content[0:500])
 
-
-
-
 def load_url():
     print("===== URL ======")
 
@@ -71,7 +69,6 @@ def load_url():
     loader = WebBaseLoader("https://github.com/basecamp/handbook/blob/master/titles-for-programmers.md")
     docs = loader.load()
     print(docs[0].page_content[:500])
-
 
 def load_notion():
     print("===== NotionDB ======")
@@ -86,8 +83,7 @@ def load_notion():
     print(docs[0].metadata)
 
 
-
 #load_pdf()
 #load_youtube()
 #load_url()
-#load_notion()
+load_notion()
