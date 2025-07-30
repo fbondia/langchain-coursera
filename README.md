@@ -28,7 +28,7 @@ source env/bin/activate
 ## Dependências
 
 ```
-pip install langchain pypdf yt_dlp pydub dotenv openai langchain-community beautifulsoup4 tiktoken langchain-openai langchain_chroma chromadb lark scikit-learn jq
+pip install langchain pypdf yt_dlp pydub dotenv openai langchain-community beautifulsoup4 tiktoken langchain-openai langchain_chroma chromadb lark scikit-learn jq colorama
 ```
 
 ## O processo com o LangChain ocorre nas etapas LOAD, SPLIT, EMBED, RETRIEVE
