@@ -39,8 +39,32 @@ embedding = OpenAIEmbeddings()
 gliner = GLiNER.from_pretrained("urchade/gliner_base")
 
 def extract_entities(text):
+
+    dream_labels = [
+        "Person",             # Pessoas reais ou imaginárias
+        "Animal",             # Animais comuns ou fantásticos
+        "Creature",           # Seres fantásticos ou híbridos
+        "Location",           # Locais reais ou simbólicos
+        "Object",             # Objetos com destaque simbólico
+        "Symbol",             # Símbolos abstratos (ex: cruz, espelho, túnel)
+        "Emotion",            # Emoções mencionadas ou sentidas (ex: medo, êxtase)
+        "Action",             # Ações relevantes (ex: fugir, cair, voar)
+        "Color",              # Cores citadas ou marcantes (ex: vermelho, dourado)
+        "BodyPart",           # Partes do corpo (ex: olhos, mãos, dentes)
+        "Weather",            # Clima (ex: chuva, neblina)
+        "Time",               # Marcação temporal (ex: noite, manhã, infância)
+        "SupernaturalEntity",# Entidades divinas, místicas ou espíritos
+        "VoiceOrSound",       # Vozes, gritos, ruídos
+        "Feeling",            # Sensações físicas ou espirituais
+        "Event",              # Situações como casamento, morte, fuga
+        "FamilyRelation",     # Irmão, pai, filho, etc
+        "Vehicle",            # Carros, trens, barcos
+        "Clothing",           # Roupas com destaque simbólico
+        "Food",               # Alimentos com carga afetiva ou simbólica
+    ]
+
     labels = ["Pessoa", "Local", "Animal", "Conceito", "Data", "Cor"]
-    return gliner.predict_entities(text, labels, threshold=0.5)
+    return gliner.predict_entities(text, dream_labels, threshold=0.5)
 
 from colorama import Fore, Style, init
 init(autoreset=True)
@@ -241,7 +265,7 @@ def hybrid_search(query, alpha=0.5, top_k=5):
     final_scores = alpha * semantic_scores + (1 - alpha) * tfidf_scores
     top_indices = np.argsort(final_scores)[::-1][:top_k]
 
-    return [all_chunks[i] for i in top_indices]
+    return [(all_chunks[i], final_scores[i]) for i in top_indices]
 
 
 def run_menu():
@@ -276,7 +300,7 @@ def run_menu():
             except ValueError:
                 alpha = 0.5
             results = hybrid_search(query, alpha=alpha, top_k=5)
-            for result in results:
+            for result, score in results:
                 pretty_print_dream(result, score)
 
         elif choice == "4":
